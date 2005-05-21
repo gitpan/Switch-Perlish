@@ -1,0 +1,329 @@
+=pod
+
+=head1 NAME
+
+Switch::Perlish::Smatch::Comparators - overall document for comparator behaviour
+
+=head1 COMPARATORS
+
+Below is a complete listing of the default comparators that come with
+L<Switch::Perlish>.
+
+In each comparator description C<$t> refers to the topic and C<$m> refers to
+the match, or the first and second arguments, respectively. 
+
+=head2 Array
+
+=over 4
+
+=item ARRAY
+
+smatch for an element of @$m in @$t
+
+=item CODE
+
+call &$m with @$t
+
+=item HASH
+
+check if an element of @$t exists as a key in %$m
+
+=item OBJECT
+
+check if an element of @$t exists as a method of $m
+
+=item Regexp
+
+match $m against the elements of @$t
+
+=item SCALAR
+
+check if $m points to an element of @$t
+
+=item UNDEF
+
+return false as $t is already defined
+
+=item VALUE
+
+smatch for $m in @$t
+
+=back
+
+=head2 Code
+
+=over 4
+
+=item ARRAY
+
+check if $m refers to $t
+
+=item CODE
+
+pass %$m to $t
+
+=item HASH
+
+pass @$m to $t
+
+=item OBJECT
+
+pass $m to $t
+
+=item Regexp
+
+pass $m to $t
+
+=item SCALAR
+
+call $t with $m
+
+=item VALUE
+
+call $t with $m
+
+=back
+
+=head2 Hash
+
+=over 4
+
+=item ARRAY
+
+check if an element of @$m exists as a key of %$t
+
+=item CODE
+
+check if the return from &$m is a hash key of %$t
+
+=item HASH
+
+check if a key =E<gt> value pair exists in both %$t and %$m
+
+=item OBJECT
+
+check if a key of %$t exists as a method of $m
+
+=item Regexp
+
+check if any keys from %$t match $m
+
+=item SCALAR
+
+check if $m points to value in %$t
+
+=item UNDEF
+
+check for an undefined value in %$t (better suggestions welcome)
+
+=item VALUE
+
+check if $m exists as a key in %$t
+
+=back
+
+=head2 Object
+
+=over 4
+
+=item ARRAY
+
+if the $t is a blessed ARRAY, delegate to the C<< ARRAYE<lt>=E<gt>ARRAY >> comparator
+
+=item CODE
+
+call the $t on &$m i.e C<< $t->$m >>
+
+=item HASH
+
+if the $t is a blessed HASH, delegate to the C<< HASHE<lt>=E<gt>HASH >> comparator
+
+=item OBJECT
+
+check if the $t->isa($m) or the same class (better suggestions welcome)
+
+=item Regexp
+
+match the class of $t against the $m
+
+=item SCALAR
+
+check if the $m points to the $t
+
+=item UNDEF
+
+croak("Can't compare OBJECT with an undef") # suggestions welcome
+
+=item VALUE
+
+check if $t has $m as a method
+
+=back
+
+=head2 Regexp
+
+=over 4
+
+=item ARRAY
+
+match $t for every element in @$m
+
+=item CODE
+
+pass $t to $m
+
+=item HASH
+
+check if any of keys of %$m match the $t
+
+=item OBJECT
+
+match $t against $m's class
+
+=item Regexp
+
+match $m to $t
+
+=item SCALAR
+
+check if $m refers to $t
+
+=item UNDEF
+
+croak("Can't compare Regexp with an undef") # suggestions welcome
+
+=item VALUE
+
+match $t against $m
+
+=back
+
+=head2 Scalar
+
+=over 4
+
+=item ARRAY
+
+check if $t points to an element of @$m
+
+=item CODE
+
+check if $t points to $m
+
+=item HASH
+
+check if $t points to value in %$m
+
+=item OBJECT
+
+check if the sref refers to the object
+
+=item Regexp
+
+check if the sref refers to the Regexp object
+
+=item SCALAR
+
+numerically compare the scalar refs
+
+=item UNDEF
+
+check if $$t is undef
+
+=item VALUE
+
+call C<Switch::Perlish::Smatch::value_cmp()> with $$t and $m
+
+=back
+
+=head2 Undef
+
+=over 4
+
+=item ARRAY
+
+check for an undef in @$m
+
+=item CODE
+
+pass undef to &$m (to be consistent with other CODE comparators)
+
+=item HASH
+
+check for an undefined value in %$m (better suggestions welcome)
+
+=item OBJECT
+
+croak("Can't compare undef with OBJECT") # suggestions welcome
+
+=item Regexp
+
+croak("Can't compare undef with Regexp") # suggestions welcome
+
+=item SCALAR
+
+check if $$m is undef
+
+=item UNDEF
+
+return true as $m is also undefined
+
+=item VALUE
+
+return false as $m is already defined
+
+=back
+
+=head2 Value
+
+=over 4
+
+=item ARRAY
+
+check if the $t is in $m
+
+=item CODE
+
+pass $t to &$m
+
+=item HASH
+
+check if the $t exists as a key in $m
+
+=item OBJECT
+
+check if the method $t exists in $m
+
+=item Regexp
+
+regexp match $t against $m
+
+=item SCALAR
+
+check if what $m points to is the same as $t
+
+=item UNDEF
+
+return false, a VALUE is always defined
+
+=item VALUE
+
+call C<Switch::Perlish::Smatch::value_cmp()> with $t and $m
+
+=back
+
+=head1 SEE. ALSO
+
+L<Switch::Perlish::Smatch>
+
+=head1 AUTHOR
+
+Dan Brook C<< <cpan@broquaint.com> >>
+
+=head1 COPYRIGHT
+
+Copyright (c) 2005, Dan Brook. All Rights Reserved. This module is free
+software. It may be used, redistributed and/or modified under the same
+terms as Perl itself.
+
+=cut
