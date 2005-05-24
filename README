@@ -1,15 +1,22 @@
-Switch::Perlish version 1.0.0
+Switch::Perlish version 1.0.1
 =============================
 
-This is a Perl-oriented implementation of the C<switch> statement. It uses
-smart-matching in C<case>s which can be configured and extended by the user.
-There is no magical syntax so C<switch>/C<case>/C<default> expect coderefs,
+This is a Perl-oriented implementation of the switch statement. It uses
+smart-matching in cases which can be configured and extended by the user.
+There is no magical syntax so switch/case/default expect coderefs,
 which are most simply provided by anonymous subroutines. By default successful
-C<case> statements do not fall through[1]. To get fall through functionality
-call the C<fallthrough> function explicitly.
+case statements do not fall through[1]. To fall through a case block
+call the fallthrough subroutine explicitly. For C style switch
+behaviour[2] simply call the module with an upper-case C i.e
 
-[1] To 'fall through' in a C<case> block means that the C<switch> block isn't
-exited upon success
+  use Switch::Perlish 'C';
+
+[1] To 'fall through' in a case block means that the switch block
+isn't exited upon success
+
+[2] upon a case succesfully matching all subsequent cases succeed, to
+break from the switch completely use end
+
 
 INSTALLATION
 

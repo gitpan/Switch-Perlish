@@ -15,7 +15,8 @@ MANIFEST.SKIP
 META.yml
 README
 t/00switch.t
-t/01smatch.t
+t/01switch-c.t
+t/02smatch.t
 t/pod.t
 t/smatch-array.t
 t/smatch-code.t
