@@ -3,7 +3,7 @@ package Switch::Perlish;
 require Exporter;
 @ISA     = 'Exporter';
 @EXPORT  = qw/ switch case default fallthrough stop /;
-$VERSION = '1.0.1';
+$VERSION = '1.0.2';
 
 use Switch::Perlish::Smatch;
 
@@ -79,7 +79,7 @@ sub switch {
 
 ## exit the switch block and set $@ to an object containing the resulting code
 ## btw, this blessing trickery is for people who want the result propagated
-sub end_case { die bless \@_, SUCCESS }
+sub _end_case { die bless \@_, SUCCESS }
 
 sub fallthrough {
   ## make sure we're not called out of context
@@ -112,7 +112,7 @@ sub _exec_block {
   die $@
     if $@;
   
-  end_case @ret
+  _end_case @ret
     unless $CSTYLE and $FALLING;
 
   return @ret;
@@ -158,7 +158,7 @@ Switch::Perlish - A Perlish implementation of the C<switch> statement.
 
 =head1 VERSION
 
-1.0.1 - Now with C<C> style switch behaviour.
+1.0.2 - Now with C<C> style switch behaviour.
 
 =head1 SYNOPSIS
 
@@ -237,7 +237,7 @@ I<< [1] To 'fall through' in a C<case> block means that the C<switch> block
 isn't exited upon success >>
 
 I<< [2] upon a C<case> succesfully matching all subsequent C<case>s succeed, to
-break from the C<switch> completely use C<end> >>
+break from the C<switch> completely use C<stop> >>
 
 =head2 Smart Matching
 
@@ -325,7 +325,7 @@ This, along with C<case> and C<default>, will also attempt to return
 If C<$topic> smart-matches successfully against C<$match> then execute
 C<$block> and exit from C<switch>, but if using C<C> style behaviour, then
 continue executing the block and all subsequent C<case> C<$block>s until
-the end of the current C<switch> or a call to C<end>. I<NB>: this cannot be
+the end of the current C<switch> or a call to C<stop>. I<NB>: this cannot be
 called outside of C<switch>, if you want to use I<smart matching> functionality,
 see. L<Switch::Perlish::Smatch>.
 
@@ -339,7 +339,7 @@ C<switch>.
 Fall through the the current C<case> block. I<NB>: this cannot be called outside
 of C<switch>.
 
-=item end()
+=item stop()
 
 Use in C<case> blocks exit the surrounding C<switch> block, ideally used with
 the C<C> style behaviour as it mimics C<C>'s C<break>. I<NB>: this cannot be

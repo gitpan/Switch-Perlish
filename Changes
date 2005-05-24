@@ -1,0 +1,14 @@
+Tue May 24 12:53:06 GMTST 2005
+
+  * changed docs to say 'stop' not 'end' (as it was originally named)
+  * added Changes (was missing from MANIFEST)
+
+Tue May 24 12:13:30 GMTST 2005 - 1.0.1
+
+  * added C-style switch behaviour
+  * updated and added to lib/Switch/Perlish.pm docs
+  * started using subversion
+ 
+Thu May 19 21:05:04 GMTST 2005 - 1.0.0
+
+  * Initial release

@@ -9,6 +9,7 @@ lib/Switch/Perlish/Smatch/Undef.pm
 lib/Switch/Perlish/Smatch/Value.pm
 lib/Switch/Perlish/Smatch.pm
 lib/Switch/Perlish.pm
+Changes
 Makefile.PL
 MANIFEST
 MANIFEST.SKIP
