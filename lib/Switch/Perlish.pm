@@ -3,7 +3,7 @@ package Switch::Perlish;
 require Exporter;
 @ISA     = 'Exporter';
 @EXPORT  = qw/ switch case default fallthrough stop /;
-$VERSION = '1.0.2';
+$VERSION = '1.0.3';
 
 use Switch::Perlish::Smatch;
 
@@ -28,7 +28,7 @@ use Scalar::Util 'reftype';
 sub called_by {
   my $name  = $_[0];
   my $depth = defined( $_[1] ) ? $_[1] : 3;
-  return +(caller $depth)[3] !~ /::$name$/;
+  return +(caller $depth)[3] !~ /::\Q$name\E$/;
 }
 
 ## did we leave the switch() from a successful case()?
@@ -158,7 +158,7 @@ Switch::Perlish - A Perlish implementation of the C<switch> statement.
 
 =head1 VERSION
 
-1.0.2 - Now with C<C> style switch behaviour.
+1.0.3 - Update and corrected documentation.
 
 =head1 SYNOPSIS
 
@@ -214,7 +214,7 @@ this module) would be:
       sub { print '$foo matched nothing' };
   };
 
-So the first argument to C<switch> is the thing to be tested (in code above,
+So the first argument to C<switch> is the thing to be tested (in the code above,
 C<$foo>), and the second argument is the block of tests. Each C<case> statement
 matches its first argument against C<$foo>, and if the match is successful,
 the associated block is executed, so running the above code outputs: C<$foo
@@ -228,7 +228,7 @@ smart-matching in C<case>s which can be configured and extended by the user.
 There is no magical syntax so C<switch>/C<case>/C<default> expect coderefs,
 which are most simply provided by anonymous subroutines. By default successful
 C<case> statements do not fall through[1]. To fall through a C<case> block
-call the C<fallthrough> subroutine explicitly. For C<C> style switch
+call the C<fallthrough> subroutine explicitly. For C<C> style C<switch>
 behaviour[2] simply call the module with an upper-case I<C> i.e
 
   use Switch::Perlish 'C';
@@ -236,8 +236,8 @@ behaviour[2] simply call the module with an upper-case I<C> i.e
 I<< [1] To 'fall through' in a C<case> block means that the C<switch> block
 isn't exited upon success >>
 
-I<< [2] upon a C<case> succesfully matching all subsequent C<case>s succeed, to
-break from the C<switch> completely use C<stop> >>
+I<< [2] upon a C<case> succesfully matching all subsequent C<case>s succeed; to
+break out from the current C<switch> completely use C<stop> >>
 
 =head2 Smart Matching
 
@@ -266,10 +266,10 @@ is being matched against an array e.g
   };
 
 So here the I<smart matching> is checking for the existence of C<$num> in the
-provided arrays. In the above code ranges happen to be used, but any array
+provided arrays. In the above code I<ranges> happen to be used, but any array
 would suffice. To see how different value types compare with each other see.
 L<Switch::Perlish::Smatch::Comparators>, which provides descriptions for all
-the default comparator.
+the default comparators.
 
 The code behind this I<smart matching> can be found in
 L<Switch::Perlish::Smatch> which itself delegates to the appropriate comparator
@@ -279,7 +279,7 @@ details on the I<smart matching> implementation and how it can be extended.
 =head1 COMPARISON
 
 Because there is an existing module which implements C<switch> this section
-intends to provide clarification of the differences that module, L<Switch>
+intends to provide clarification of the differences that module, L<Switch>,
 and this one.
 
 =head2 Native vs. New
@@ -306,8 +306,16 @@ and this is done through the companion module L<Switch::Perlish::Smatch>.
 Unlike L<Switch>, C<Switch::Perlish> requires the use of the the C<sub> keyword
 when creating blocks. This is because there is no standard way of magically
 coercing bare blocks into closures, unless one uses the C<(E<amp>)> prototype,
-and that is only applicable where it is the first argument. So, for now, 3 extra
-keystrokes are necessary when using blocks with C<Switch::Perlish>.
+and that is only applicable where it is the first argument. Also, prototypes are
+too restrictive for what is intended as a very I<perlish> module e.g
+
+  $ perl -e 'sub f(&) { print $_[0]->() } sub g{'foo'} my $r = \&g; f $r'
+  Type of arg 1 to main::f must be block or sub {} (not private variable)
+  at -e line 1, at EOF
+  Execution of -e aborted due to compilation errors.
+
+So, for now, 3 extra keystrokes are necessary when using blocks with
+C<Switch::Perlish>.
 
 I<< [3] see. L<Filter::Simple> for more info on source filters >>.
 
@@ -318,32 +326,33 @@ I<< [3] see. L<Filter::Simple> for more info on source filters >>.
 =item switch( $topic, $block );
 
 Execute the given C<$block> allowing C<case> statements to access the C<$topic>.
-This, along with C<case> and C<default>, will also attempt to return
+This, along with C<case> and C<default>, will also attempt to return in the same
+manner as normal subroutines e.g you can assign to the result of them.
 
 =item case( $match, $block );
 
-If C<$topic> smart-matches successfully against C<$match> then execute
-C<$block> and exit from C<switch>, but if using C<C> style behaviour, then
-continue executing the block and all subsequent C<case> C<$block>s until
-the end of the current C<switch> or a call to C<stop>. I<NB>: this cannot be
-called outside of C<switch>, if you want to use I<smart matching> functionality,
-see. L<Switch::Perlish::Smatch>.
+If the current C<$topic> successfully I<smart matches> against C<$match> then
+execute C<$block> and exit from current C<switch>, but if using C<C> style
+behaviour, then continue executing the block and all subsequent C<case>
+C<$block>s until the end of the current C<switch> or a call to C<stop>. I<NB>:
+this cannot be called outside of C<switch>, if you want to use
+I<smart matching> functionality, see. L<Switch::Perlish::Smatch>.
 
 =item default( $block )
 
-Execute C<$block> and exit from C<switch>. I<NB>: this cannot be called outside of
-C<switch>.
+Execute C<$block> and exit from C<switch> (unless falling through when using 
+C<C> style C<switch>). I<NB>: this cannot be called outside of C<switch>.
 
 =item fallthrough()
 
-Fall through the the current C<case> block. I<NB>: this cannot be called outside
-of C<switch>.
+Fall through the the current C<case> block i.e continue to evaluate the rest of
+the C<switch> block. I<NB>: this cannot be called outside of C<case>.
 
 =item stop()
 
-Use in C<case> blocks exit the surrounding C<switch> block, ideally used with
-the C<C> style behaviour as it mimics C<C>'s C<break>. I<NB>: this cannot be
-called outside of C<switch>.
+Use in C<case> blocks to exit the current C<switch> block, ideally when used
+with the C<C> style behaviour as it mimics C<C>'s C<break>. I<NB>: this cannot
+be called outside of C<case>.
 
 =back
 
@@ -370,11 +379,12 @@ The current thing being matched against.
 =item C<$CSTYLE>
 
 If C<Switch::Perlish> is called with the I<C> argument, this is set to
-true and C<C> style behaviour is enabled.
+true and C<C> style C<switch> behaviour is enabled.
 
 =item C<$FALLING>
 
-Set to true when falling through the current C<switch> block.
+Set to true when falling through the current C<switch> block i.e set to true
+when C<fallthrough> has been called.
 
 =back
 
@@ -405,6 +415,10 @@ Test with earlier versions of C<perl>
 =item *
 
 Drop C<warnings> for compatibility with older perls?
+
+=item *
+
+Allow lists as the topic
 
 =back
 

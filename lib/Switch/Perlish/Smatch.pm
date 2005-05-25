@@ -1,6 +1,6 @@
 package Switch::Perlish::Smatch;
 
-$VERSION = '1.0.0';
+$VERSION = '1.0.1';
 
 require Exporter;
 @EXPORT_OK = qw/ smatch value_cmp /;
@@ -146,7 +146,7 @@ Switch::Perlish::Smatch - the 'smart' behind the matching in S::P
 
 =head1 VERSION
 
-1.0.0 - Initial release
+1.0.1 - Updated and cleaned up documentation.
 
 =head1 SYNOPSIS
 
@@ -170,9 +170,9 @@ delegating to the associated subroutine, or C<croak>ing if one isn't available.
 When talking about the subroutine that compares the two values in the document
 below it will referred to as a I<comparator>
 
-=item topic/comparator category
+=item comparator category
 
-A topic/comparator category holds all the comparators for a given type.
+A comparator category holds all the comparators for a given type.
 
 =item comparator notation
 
@@ -191,7 +191,7 @@ first and second arguments, respectively).
 Try to smart match the C<$topic> against C<$match> by delegating to the
 appopriate comparator. It returns the result of the match per the comparator,
 but it can always be assumed that a successful match will evaluate to I<true>
-and an unsuccessful one I<false>.
+and an unsuccessful one I<false>. This can also be exported as C<smatch>.
 
 =item register( %hash )
 
@@ -249,14 +249,14 @@ So both the C<< My::Obj<=>VALUE >> and C<< VALUEE<lt>=>My::Obj >> comparators
 will be setup, where C<< VALUEE<lt>=>My::Obj >> will behave exactly the same as
 C<< My::Obj<=>VALUE >>.
 
-=item register_package( $package, $topic[, $prefix, $reversible] );
+=item register_package( $package, $category[, $prefix, $reversible] );
 
 Given the package name in C<$package>, register all subroutines beginning with
-C<$prefix> (by default an underscore: C<_>) to the topic category C<$topic>.
-This is how the standard comparator functions are registered. An empty
-C<$prefix> is disallowed as C<register_package()> must be able to know which
-subroutines to register. If C<$reversible> is passed in and it evaluates to
-true then all comparators for this package will be reversible.
+C<$prefix> (by default an underscore: C<_>) to the comparator category in
+C<$category>. This is how the standard comparator functions are registered. An
+empty C<$prefix> is disallowed as C<register_package()> must be able to know
+which subroutines to register. If C<$reversible> is passed in and it evaluates
+to true then all comparators for this package will be reversible.
 
 =item is_registered( $t_type[, $m_type] )
 
@@ -314,7 +314,7 @@ So we can now compare simple values with L<CGI> objects e.g
 
   my $check = $ARGV[0];
   printf "%s $check in params!\n",
-         smatch($q, $check) ? 'found' : q[didn't find];
+         smatch($q, $check) ? 'found' : 'not found';
 
 =head2 The default types
 
@@ -368,36 +368,36 @@ L<Switch::Perlish::Smatch::Comparators>.
 
 =item *
 
-Add more helper subroutines for common operations that aren't already the
-default, and make them easier to access
+Add more helper subroutines for common operations default, and make them easier
+to access.
 
 =item *
 
-Move into own module if people find it sufficiently useful
+Move into own module if people find it sufficiently useful.
 
 =item *
 
-Add object functionality perhaps (but who wants that?)
+Add object functionality perhaps (but who wants that?).
 
 =item *
 
-Maybe add inheritable comparators
+Maybe add inheritable comparators.
 
 =item *
 
-Set __ANON__ to comparator for debugging purposes
+Set __ANON__ to comparator name for debugging purposes.
 
 =item *
 
-Add support for C<GLOB> (and possibly C<IO>) types
+Add support for C<GLOB> (and possibly C<IO>) types.
 
 =item *
 
-Store the smatch result somewhere
+Store the smatch result somewhere.
 
 =item *
 
-Allow for choice of which comparators are reversible in C<register_package()>
+Allow for choice of which comparators are reversible in C<register_package()>.
 
 =back
 
