@@ -11,7 +11,7 @@ BEGIN {
   use_ok $pkg;
 }
 
-can_ok(__PACKAGE__, 'switch')
+can_ok(__PACKAGE__, $_)
   for @Switch::Perlish::EXPORT;
 
 ok eval <<'C0D3Z', 'basic switch() call';
@@ -26,6 +26,31 @@ switch 1, sub {
   default sub { 1 };
 };
 C0D3Z
+
+{
+  local $@;
+  eval {
+    switch 1, sub { case 1 };
+  };
+  like $@, qr/^No case block provided/, 'missing case block detected ok';
+}
+
+{
+  my $yay = 1;
+  switch 1, sub {
+    case 1, sub { stop };
+    $yay = fail "kept on falling through after stop";
+  };
+  pass "exited switch with stop ok"
+    if $yay;
+}
+
+for(qw/ case default fallthrough stop /) {
+  local $@;
+  eval { __PACKAGE__->can($_)->() };
+  like $@, qr/Not called within/,
+       "$_ failed expectedly when called out of context";
+}
 
 {
   my $ret = 'http://bash.org/?201';

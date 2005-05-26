@@ -30,6 +30,13 @@ switch 1, sub {
 };
 C0D3Z
 
+ok eval <<'C0D3Z', 'basic switch() call with blockless case';
+switch 1, sub {
+  case 1;
+  case 2, sub { 1 };
+};
+C0D3Z
+
 switch 1, sub {
   case 1, sub {  };
   case 2, sub { pass 'basic switch() call with fallthrough' };
@@ -54,16 +61,31 @@ switch 1, sub {
 }
 
 {
-  my $yay;
-  $yay = 0;
   switch 1, sub {
     case 1, sub {  };
-    $yay = pass "fell through successfully";
+    pass "fell through successfully";
     case 2, sub { pass "in another case after fallthrough"; stop };
-    $yay = fail "kept on falling through";
+    fail "kept on falling through";
   };
-  pass "stopped falling through successfully"
-    unless $yay;
+}
+
+{
+  switch 1, sub {
+    case 1;
+    case 2;
+    pass "still falling with blockless cases";
+    case 3, sub { pass "fell through with blockless cases"; stop };
+    fail "kept on falling through";
+  };
+}
+
+{
+  switch 1, sub {
+    case 1;
+    case 2;
+    default sub { pass "fell through to default" };
+    fail "kept on falling through";
+  };
 }
 
 {
