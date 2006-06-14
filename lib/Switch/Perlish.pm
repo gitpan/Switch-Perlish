@@ -3,7 +3,7 @@ package Switch::Perlish;
 require Exporter;
 @ISA     = 'Exporter';
 @EXPORT  = qw/ switch case default fallthrough stop /;
-$VERSION = '1.0.4';
+$VERSION = '1.0.5';
 
 use Switch::Perlish::Smatch;
 
@@ -11,6 +11,12 @@ use strict;
 use warnings;
 
 use vars qw/ $MATCH $TOPIC $SWITCH $CASE $FALLING $CSTYLE /;
+
+{
+  package Switch::Perlish::Control::_success;
+  package Switch::Perlish::Control::_fallthrough;
+  package Switch::Perlish::Control::_stop;
+}
 
 use constant SUCCESS     => 'Switch::Perlish::Control::_success';
 use constant FALLTHROUGH => 'Switch::Perlish::Control::_fallthrough';
@@ -23,32 +29,33 @@ sub import {
 }
 
 use Carp 'croak';
-use Scalar::Util 'reftype';
+use Scalar::Util qw/ reftype blessed /;
 
 sub switch {
   local($TOPIC, $SWITCH)  = @_;
-  my $line_no = (caller)[2];
 
   croak "Invalid code block provided: '$SWITCH'"
     unless reftype($SWITCH) eq 'CODE';
 
-  ## restore this if we exit successfully so as not to make debugging trickier
+  ## Restore this if we exit successfully so as not to make debugging trickier.
   my $olderr = $@;
 
-  ## topicalize the topic for the switch block
+  ## Topicalize the topic for the switch block.
   local *_ = \$TOPIC;
 
-  ## we're not falling through until a successful match
+  ## We're not falling through until a successful match.
   local $FALLING = 0;
 
-  ## evaluate switch statement - a successful case (that doesn't fallthrough)
-  ## will leave the block with an error object blessed into SUCCESS, but the
-  ## user might want to return early for whatever reason, so keep that result
+  ## How the switch statement is evaluted:
+  ## A successful case (that doesn't fallthrough) will leave the block by
+  ## throwing an error object blessed into SUCCESS control exception. However,
+  ## the user might want to return early for whatever reason, so keep that
+  ## result too.
   my @result = eval { $SWITCH->() };
   my $err    = $@;
 
-  ## if something was returned from the block explicitly or a case
-  ## succeeded then try to return what seems most appropriate
+  ## If something was returned from the block explicitly or a case
+  ## succeeded then try to return what seems most appropriate.
   if( ( @result and !$err ) or _left_ok($err) ) {
     $@ = $olderr;
     my @r = @result ? @result : @$err;
@@ -66,25 +73,19 @@ sub _called_by {
   return +(caller $depth)[3] =~ /::\Q$name\E$/;
 }
 
-## did we leave the switch() from a control exception
+## Did we leave the switch() from a control exception?
 sub _left_ok {
-  return ref($_[0]) and ( UNIVERSAL::isa($_[0], SUCCESS)
-                     or   UNIVERSAL::isa($_[0], STOP    ) );
+  return blessed($_[0]) and $_[0]->isa(SUCCESS)
+                         or $_[0]->isa(STOP);
 }
 
-{
-  package Switch::Perlish::Control::_success;
-  package Switch::Perlish::Control::_fallthrough;
-  package Switch::Perlish::Control::_stop;
-}
-
-## exit the switch block and set $@ to an SUCCESS control exception
-## btw, this blessing trickery is for people who want the result propagated
+## Exit the switch block and set $@ to a S::P::_success control exception.
+## NB: This blessing trickery is for people who want the result propagated.
 sub _end_case { die bless \@_, SUCCESS }
 
 sub fallthrough {
   ## make sure we're not called out of context
-  croak "Not called within a case statement\n"
+  croak "Not called within a case statement"
     if !_called_by(case => 5);
   die bless( \do{
     my $msg = "The fallthrough control exception from Switch::Perlish"
@@ -92,26 +93,26 @@ sub fallthrough {
 }
 
 sub stop {
-  ## make sure we're not called out of context
-  croak "Not called within a case statement\n"
+  ## Make sure this isn't called out of context.
+  croak "Not called within a case statement"
     if !_called_by(case => 5);
-  ## was, "The stop control exception from Switch::Perlish", but that could be
-  ## assigned to which isn't expected behaviour i.e $r=switch{... stop };
+  ## Was, "The stop control exception from Switch::Perlish", but that could be
+  ## assigned to which isn't expected behaviour in the case of stop;.
   die bless([], STOP );
 }
 
 sub _exec_block {
   my @ret = eval { $CASE->() };
 
-  ## check for fallthrough control exception
+  ## Check for fallthrough control exception.
   return
-    if ref($@) and UNIVERSAL::isa($@, FALLTHROUGH);
+    if blessed($@) and $@->isa(FALLTHROUGH);
 
-  ## check for stop control exception
+  ## Check for stop control exception.
   die $@
-    if ref($@) and UNIVERSAL::isa($@, STOP);
+    if blessed($@) and $@->isa(STOP);
 
-  ## propagate non-control exception
+  ## Propagate non-control exception.
   die $@
     if $@;
   
@@ -122,7 +123,7 @@ sub _exec_block {
 }
 
 sub case {
-  ## if you want smatching, use S::P::Smatch::match not S::P::case
+  ## If you want smatching, use S::P::Smatch::match not S::P::case.
   croak "Not called within a switch statement\n"
     if !_called_by('switch');
   
@@ -131,7 +132,7 @@ sub case {
   croak "No case block provided"
     if !defined($CASE) and !$CSTYLE;
 
-  ## single arg case and using CSTYLE and we're falling
+  ## Single arg case and using CSTYLE and we're falling.
   return
     if $CSTYLE and $FALLING and @_ == 1;
 
@@ -140,11 +141,11 @@ sub case {
     unless $CSTYLE and $FALLING
         or Switch::Perlish::Smatch->match($TOPIC, $MATCH);
 
-  ## there's been a match, so keep on falling
+  ## There's been a match, so keep on falling.
   $FALLING = 1
     if $CSTYLE;
 
-  ## single arg case and using CSTYLE and we matched
+  ## Single arg case and using CSTYLE and we matched.
   return
     if $CSTYLE and $FALLING and @_ == 1;
 
@@ -152,7 +153,7 @@ sub case {
 }
 
 sub default {
-  ## make sure we're in a switch block
+  ## Make sure we're in a switch block.
   croak "Not called within a switch statement\n"
     if !_called_by('switch');
   
@@ -171,7 +172,7 @@ Switch::Perlish - A Perlish implementation of the C<switch> statement.
 
 =head1 VERSION
 
-1.0.4 - Now C<C> style C<switch> behaviour allows blockless C<case>s.
+1.0.5 - Mostly cosmetic changes for this release.
 
 =head1 SYNOPSIS
 
@@ -247,10 +248,10 @@ behaviour[2] simply call the module with an upper-case I<C> i.e
   use Switch::Perlish 'C';
 
 I<< [1] To 'fall through' in a C<case> block means that the C<switch> block
-isn't exited upon success >>
+isn't exited upon success. >>
 
 I<< [2] upon a C<case> succesfully matching all subsequent C<case>s succeed; to
-break out from the current C<switch> completely use C<stop> >>
+break out from the current C<switch> completely use C<stop>. >>
 
 =head2 Smart Matching
 
@@ -334,7 +335,7 @@ I<< [3] see. L<Filter::Simple> for more info on source filters >>.
 
 =head1 SUBROUTINES
 
-=over 4
+=over
 
 =item C<< switch( $topic, $block ) >>
 
@@ -372,7 +373,7 @@ subroutine cannot be called outside of C<case>.
 
 =head2 Globals
 
-=over 4
+=over
 
 =item C<$SWITCH>
 
@@ -416,7 +417,7 @@ L<Switch::Perlish::Smatch::Comparators>
 
 =head1 TODO
 
-=over 4
+=over
 
 =item *
 
@@ -438,11 +439,11 @@ Allow lists as the topic and/or cases to match against
 
 =head1 AUTHOR
 
-Dan Brook C<< <cpan@broquaint.com> >>
+Dan Brook C<< <mr.daniel.brook@gmail.com> >>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2005, Dan Brook. All Rights Reserved. This module is free
+Copyright (c) 2006, Dan Brook. All Rights Reserved. This module is free
 software. It may be used, redistributed and/or modified under the same
 terms as Perl itself.
 

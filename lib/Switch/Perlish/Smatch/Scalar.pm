@@ -7,26 +7,26 @@ use warnings;
 
 use Switch::Perlish::Smatch 'value_cmp';
 
-## DESC - call C<Switch::Perlish::Smatch::value_cmp()> with $$t and $m
+## DESC - Call C<Switch::Perlish::Smatch::value_cmp()> with $$t and $m.
 sub _VALUE {
   my($t, $m) = @_;
   return value_cmp($$t, $m);
 }
 
-## DESC - check if $$t is undef
+## DESC - Check if $$t is undef.
 sub _UNDEF {
   my($t, $m) = @_;
   return !defined($$t);
 }
 
-## DESC - numerically compare the scalar refs
+## DESC - Numerically compare the scalar refs.
 sub _SCALAR {
   my($t, $m) = @_;
   return $t == $m;
 }
 
-## not sure if this is the right thing
-## DESC - check if $t points to an element of @$m
+## Not sure if this is the right thing to do.
+## DESC - Check if $t points to an element of @$m.
 sub _ARRAY {
   my($t, $m) = @_;
   \$_ == $t and return 1
@@ -34,8 +34,8 @@ sub _ARRAY {
   return;
 }
 
-## this is an awkward comparator
-## DESC - check if $t points to value in %$m
+## This is an awkward comparator.
+## DESC - Check if $t points to a value in %$m.
 sub _HASH {
   my($t, $m) = @_;
   \$_ == $t and return 1
@@ -43,27 +43,26 @@ sub _HASH {
   return;
 }
 
-## DESC - check if $t points to $m
+## DESC - Check if $t points to $m.
 sub _CODE {
   my($t, $m) = @_;
   return $t == \$m;
 }
 
-## another awkward comparator
-## DESC - check if the sref refers to the object
+## Another awkward comparator.
+## DESC - Check if the sref refers to the object.
 sub _OBJECT {
   my($t, $m) = @_;
   return $$t == $m;
 }
 
-## comparing scalar refs with other things doesn't feel right
-## DESC - check if the sref refers to the Regexp object
+## Comparing scalar refs with other things doesn't feel right.
+## DESC - Check if the sref refers to the Regexp object.
 sub _Regexp {
   my($t, $m) = @_;
   return $$t == $m;
 }
 
-## they both act the same
 Switch::Perlish::Smatch->register_package( __PACKAGE__, 'SCALAR' );
 
 1;
@@ -72,11 +71,11 @@ Switch::Perlish::Smatch->register_package( __PACKAGE__, 'SCALAR' );
 
 =head1 NAME
 
-Switch::Perlish::Smatch::Scalar -  the C<SCALAR> comparatory category package
+Switch::Perlish::Smatch::Scalar - The C<SCALAR> comparatory category package.
 
 =head1 VERSION
 
-1.0.0 - initial release
+1.0.0 - Initial release.
 
 =head1 DESCRIPTION
 
@@ -90,11 +89,11 @@ L<Switch::Perlish::Smatch>.
 
 =head1 AUTHOR
 
-Dan Brook C<< <cpan@broquaint.com> >>
+Dan Brook C<< <mr.daniel.brook@gmail.com> >>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2005, Dan Brook. All Rights Reserved. This module is free
+Copyright (c) 2006, Dan Brook. All Rights Reserved. This module is free
 software. It may be used, redistributed and/or modified under the same
 
 =cut

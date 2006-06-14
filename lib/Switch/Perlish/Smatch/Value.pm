@@ -7,22 +7,22 @@ use warnings;
 
 use Switch::Perlish::Smatch 'value_cmp';
 
-## DESC - call C<Switch::Perlish::Smatch::value_cmp()> with $t and $m
+## DESC - Call C<Switch::Perlish::Smatch::value_cmp()> with $t and $m.
 sub _VALUE {
   my($t, $m) = @_;
   return value_cmp($t, $m);
 }
 
-## DESC - return false, a VALUE is always defined
+## DESC - Return false, a VALUE is always defined.
 sub _UNDEF { return }
 
-## DESC - check if what $m points to is the same as $t
+## DESC - Check if what $m points to is the same as $t.
 sub _SCALAR {
   my($t, $m) = @_;
   return value_cmp($t, $$m);
 }
 
-## DESC - check if the $t is in $m
+## DESC - Check if the $t is in $m.
 sub _ARRAY {
   my($t, $m) = @_;
   Switch::Perlish::Smatch::value_cmp($t, $_) and return 1
@@ -30,26 +30,26 @@ sub _ARRAY {
   return;
 }
 
-## provide a wrapper sub to test against hash values?
-## DESC - check if the $t exists as a key in $m
+## Provide a wrapper sub to test against hash values?
+## DESC - Check if the $t exists as a key in $m.
 sub _HASH {
   my($t, $m) = @_;
   return exists $m->{$t};
 }
 
-## DESC - pass $t to &$m
+## DESC - Pass $t to &$m.
 sub _CODE {
   my($t, $m) = @_;
   return $m->($t);
 }
 
-## DESC - check if the method $t exists in $m
+## DESC - Check if the method $t exists in $m.
 sub _OBJECT {
   my($t, $m) = @_;
-  return UNIVERSAL::can($m, $t);
+  return $m->can($t);
 }
 
-## DESC - regexp match $t against $m
+## DESC - Regexp match $t against $m.
 sub _Regexp {
   my($t, $m) = @_;
   return $t =~ /$m/;
@@ -63,11 +63,11 @@ Switch::Perlish::Smatch->register_package( __PACKAGE__, 'VALUE' );
 
 =head1 NAME
 
-Switch::Perlish::Smatch::Value -  the C<VALUE> comparatory category package
+Switch::Perlish::Smatch::Value - The C<VALUE> comparatory category package.
 
 =head1 VERSION
 
-1.0.0 - initial release
+1.0.0 - Initial release.
 
 =head1 DESCRIPTION
 
@@ -83,11 +83,11 @@ L<Switch::Perlish::Smatch::Comparators>
 
 =head1 AUTHOR
 
-Dan Brook C<< <cpan@broquaint.com> >>
+Dan Brook C<< <mr.daniel.brook@gmail.com> >>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2005, Dan Brook. All Rights Reserved. This module is free
+Copyright (c) 2006, Dan Brook. All Rights Reserved. This module is free
 software. It may be used, redistributed and/or modified under the same
 terms as Perl itself.
 

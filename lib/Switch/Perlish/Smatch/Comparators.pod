@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-Switch::Perlish::Smatch::Comparators - overall document for comparator behaviour
+Switch::Perlish::Smatch::Comparators - Overall document for comparator behaviour.
 
 =head1 COMPARATORS
 
@@ -14,301 +14,305 @@ the match, or the first and second arguments, respectively.
 
 =head2 Array
 
-=over 4
+=over
 
 =item ARRAY
 
-smatch for an element of @$m in @$t
+Smatch for an element of C<@$m> in C<@$t>.
 
 =item CODE
 
-call &$m with @$t
+Call C<&$m> with C<@$t>.
 
 =item HASH
 
-check if an element of @$t exists as a key in %$m
+Check if an element of C<@$t> exists as a key in C<%$m>.
 
 =item OBJECT
 
-check if an element of @$t exists as a method of $m
+Check if an element of C<@$t> exists as a method of C<$m>.
 
 =item Regexp
 
-match $m against the elements of @$t
+Match C<$m> against the elements of C<@$t>.
 
 =item SCALAR
 
-check if $m points to an element of @$t
+Check if C<$m> points to an element of C<@$t>.
 
 =item UNDEF
 
-return false as $t is already defined
+Return false as C<$t> is already defined.
 
 =item VALUE
 
-smatch for $m in @$t
+Smatch for C<$m> in C<@$t>.
 
 =back
 
 =head2 Code
 
-=over 4
+=over
 
 =item ARRAY
 
-check if $m refers to $t
+Check if C<$m> refers to C<$t>.
 
 =item CODE
 
-pass %$m to $t
+Pass C<%$m> to C<$t>.
 
 =item HASH
 
-pass @$m to $t
+Pass C<@$m> to C<$t>.
 
 =item OBJECT
 
-pass $m to $t
+Pass C<$m> to C<$t>.
 
 =item Regexp
 
-pass $m to $t
+Pass C<$m> to C<$t>.
 
 =item SCALAR
 
-call $t with $m
+Call C<$t> with C<$m>.
 
 =item VALUE
 
-call $t with $m
+Call C<$t> with C<$m>.
 
 =back
 
 =head2 Hash
 
-=over 4
+=over
 
 =item ARRAY
 
-check if an element of @$m exists as a key of %$t
+Check if an element of C<@$m> exists as a key of C<%$t>.
 
 =item CODE
 
-check if the return from &$m is a hash key of %$t
+Check if the return from C<&$m> is a hash key of C<%$t>.
 
 =item HASH
 
-check if a key =E<gt> value pair exists in both %$t and %$m
+Check if a C<< key => value >> pair exists in both C<%$t> and C<%$m>.
 
 =item OBJECT
 
-check if a key of %$t exists as a method of $m
+Check if a key of C<%$t> exists as a method of C<$m>.
 
 =item Regexp
 
-check if any keys from %$t match $m
+Check if any keys from C<%$t> match C<$m>.
 
 =item SCALAR
 
-check if $m points to value in %$t
+Check if C<$m> points to value in C<%$t>.
 
 =item UNDEF
 
-check for an undefined value in %$t (better suggestions welcome)
+Check for an undefined value in C<%$t> (better suggestions welcome).
 
 =item VALUE
 
-check if $m exists as a key in %$t
+Check if C<$m> exists as a key in C<%$t>.
 
 =back
 
 =head2 Object
 
-=over 4
+=over
 
 =item ARRAY
 
-if the $t is a blessed ARRAY, delegate to the C<< ARRAYE<lt>=E<gt>ARRAY >> comparator
+If the C<$t> is a blessed ARRAY, delegate to the C<< ARRAYE<lt>=>ARRAY >>
+comparator, otherwise returns false.
 
 =item CODE
 
-call the $t on &$m i.e C<< $t->$m >>
+Call the C<$t> on C<&$m> i.e C<< $t->$m >>.
 
 =item HASH
 
-if the $t is a blessed HASH, delegate to the C<< HASHE<lt>=E<gt>HASH >> comparator
+If the C<$t> is a blessed HASH, delegate to the C<< HASHE<lt>=>HASH >> comparator,
+otherwise returns false.
 
 =item OBJECT
 
-check if the $t->isa($m) or the same class (better suggestions welcome)
+Check if the C<< $t->isa($m) >> or the same class (better suggestions welcome).
 
 =item Regexp
 
-match the class of $t against the $m
+Match the class of C<$t> against the C<$m>.
 
 =item SCALAR
 
-check if the $m points to the $t
+Check if the C<$m> points to the C<$t>.
 
 =item UNDEF
 
-croak("Can't compare OBJECT with an undef") # suggestions welcome
+croak("Can't compare OBJECT with an undef") # Suggestions welcome.
 
 =item VALUE
 
-check if $t has $m as a method
+Check if C<$t> has C<$m> as a method.
 
 =back
 
 =head2 Regexp
 
-=over 4
+=over
 
 =item ARRAY
 
-match $t for every element in @$m
+Match C<$t> for every element in C<@$m>.
 
 =item CODE
 
-pass $t to $m
+Pass C<$t> to C<&$m>.
 
 =item HASH
 
-check if any of keys of %$m match the $t
+Check if any of keys of C<%$m> match C<$t>.
 
 =item OBJECT
 
-match $t against $m's class
+Match C<$t> against C<$m>'s class.
 
 =item Regexp
 
-match $m to $t
+Match C<$m> to C<$t>.
 
 =item SCALAR
 
-check if $m refers to $t
+Check if C<$m> refers to C<$t>.
 
 =item UNDEF
 
-croak("Can't compare Regexp with an undef") # suggestions welcome
+croak("Can't compare Regexp with an undef") # suggestions welcome.
 
 =item VALUE
 
-match $t against $m
+Match C<$t> against C<$m>.
 
 =back
 
 =head2 Scalar
 
-=over 4
+=over
 
 =item ARRAY
 
-check if $t points to an element of @$m
+Check if C<$t> points to an element of C<@$m>.
 
 =item CODE
 
-check if $t points to $m
+Check if C<$t> points to C<$m>.
 
 =item HASH
 
-check if $t points to value in %$m
+Check if C<$t> points to value in C<%$m>.
 
 =item OBJECT
 
-check if the sref refers to the object
+Check if C<$t> refers to the object C<$m>.
 
 =item Regexp
 
-check if the sref refers to the Regexp object
+Check if C<$t> refers to the Regexp object C<$m>.
 
 =item SCALAR
 
-numerically compare the scalar refs
+Numerically compare the scalar refs C<$t> and C<$m>.
 
 =item UNDEF
 
-check if $$t is undef
+Check if C<$$t> is undef.
 
 =item VALUE
 
-call C<Switch::Perlish::Smatch::value_cmp()> with $$t and $m
+Call L<Switch::Perlish::Smatch::value_cmp()|Switch::Perlish::Smatch/"Helper_subroutines">
+with C<$$t> and C<$m>.
 
 =back
 
 =head2 Undef
 
-=over 4
+=over
 
 =item ARRAY
 
-check for an undef in @$m
+Check for an undef in C<@$m>.
 
 =item CODE
 
-pass undef to &$m (to be consistent with other CODE comparators)
+Pass undef to C<&$m> (to be consistent with other CODE comparators).
 
 =item HASH
 
-check for an undefined value in %$m (better suggestions welcome)
+Check for an undefined value in C<%$m> (better suggestions welcome).
 
 =item OBJECT
 
-croak("Can't compare undef with OBJECT") # suggestions welcome
+croak("Can't compare undef with OBJECT") # Suggestions welcome.
 
 =item Regexp
 
-croak("Can't compare undef with Regexp") # suggestions welcome
+croak("Can't compare undef with Regexp") # Suggestions welcome.
 
 =item SCALAR
 
-check if $$m is undef
+Check if C<$$m> is undef.
 
 =item UNDEF
 
-return true as $m is also undefined
+Return true as C<$m> is also undefined.
 
 =item VALUE
 
-return false as $m is already defined
+Return false as C<$m> is already defined.
 
 =back
 
 =head2 Value
 
-=over 4
+=over
 
 =item ARRAY
 
-check if the $t is in $m
+Check if C<$t> is in C<$m>.
 
 =item CODE
 
-pass $t to &$m
+Pass C<$t> to C<&$m>.
 
 =item HASH
 
-check if the $t exists as a key in $m
+Check if C<$t> exists as a key in C<$m>.
 
 =item OBJECT
 
-check if the method $t exists in $m
+Check if the method C<$t> exists in C<$m>.
 
 =item Regexp
 
-regexp match $t against $m
+Match C<$t> against C<$m>.
 
 =item SCALAR
 
-check if what $m points to is the same as $t
+Check if what C<$$m> is the same as C<$t>.
 
 =item UNDEF
 
-return false, a VALUE is always defined
+Return false, a C<VALUE> is always defined.
 
 =item VALUE
 
-call C<Switch::Perlish::Smatch::value_cmp()> with $t and $m
+Call L<Switch::Perlish::Smatch::value_cmp()|Switch::Perlish::Smatch/"Helper_subroutines">
+with C<$t> and C<$m>.
 
 =back
 
@@ -318,11 +322,11 @@ L<Switch::Perlish::Smatch>
 
 =head1 AUTHOR
 
-Dan Brook C<< <cpan@broquaint.com> >>
+Dan Brook C<< <mr.daniel.brookC<@gmail>.com> >>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2005, Dan Brook. All Rights Reserved. This module is free
+Copyright (c) 2006, Dan Brook. All Rights Reserved. This module is free
 software. It may be used, redistributed and/or modified under the same
 terms as Perl itself.
 

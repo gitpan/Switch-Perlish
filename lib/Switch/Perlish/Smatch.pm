@@ -15,13 +15,11 @@ use warnings::register;
 use Carp 'croak';
 use Scalar::Util 'blessed';
 
-## XXX: move this into a separate module ???
+## XXX: Convert %REGISTRY to a class heirarchy?
+## XXX: Make tests more consistent?
+## XXX: Provide an easy way to default to existing comparators?
 
-## XXX: convert %REGISTRY to a class heirarchy?
-## XXX: make tests more consistent?
-## XXX: provide an easy way to default to existing comparators?
-
-## XXX: should this be done 'smartly?'
+## XXX: Should this be done 'smartly?'
 require Switch::Perlish::Smatch::Value;
 require Switch::Perlish::Smatch::Undef;
 require Switch::Perlish::Smatch::Scalar;
@@ -31,7 +29,7 @@ require Switch::Perlish::Smatch::Code;
 require Switch::Perlish::Smatch::Object;
 require Switch::Perlish::Smatch::Regexp;
 
-## thanks to merlyn for this snippet
+## Thanks to merlyn for this snippet.
 sub _is_num {
   no warnings;
   return ($_[0] & ~ $_[0]) eq "0";
@@ -39,7 +37,7 @@ sub _is_num {
 
 sub value_cmp {
   my($a,$b) = @_;
-  ## try to compare 2 strings then 2 numbers then do a regexp guesstimate
+  ## Try to compare 2 strings then 2 numbers then do a regexp guesstimate.
   !_is_num($a) and !_is_num($b) and return $a eq $b;
    _is_num($a) and  _is_num($b) and return $a == $b;
   no warnings;
@@ -51,12 +49,12 @@ sub match {
   my($t, $m) = @_;
   my($t_type, $m_type) = map _get_type($_), $t, $m;
    
-  ## default to OBJECT if we don't have a registered class comparator
+  ## Default to OBJECT if we don't have a registered class comparator.
   $t_type = 'OBJECT'
     if blessed($t) and !$self->is_registered($t_type);
   $m_type = 'OBJECT'
     if blessed($m) and !$self->is_registered($t_type, $m_type);
-  ## treat REF the same as SCALAR, i.e KISS
+  ## Treat REF the same as SCALAR, i.e KISS.
   $_ eq 'REF' and $_ = 'SCALAR'
     for $t_type, $m_type;
   
@@ -66,11 +64,11 @@ sub match {
 ## for exporting
 *smatch = \&match;
 
-## make this public?
+## Make this public?
 sub _get_type {
   my $foo  = shift;
-  ## XXX: is this the best way to check?
-  ## get the class name, or the reference type, or we're a value/undef
+  ## XXX: Is this the best way to check?
+  ## Get the class name, or the reference type, or we're a value/undef.
   return blessed($foo) || ref($foo) || ( defined($foo) ? 'VALUE' : 'UNDEF' );
 }
 
@@ -81,7 +79,7 @@ sub dispatch {
   my($t,$m) = @_ == 5 ?
     @_[3,4] : ( $Switch::Perlish::TOPIC, $Switch::Perlish::MATCH );
 
-  ## XXX: subvert the stack with a goto?
+  ## XXX: Subvert the stack with a goto?
   $REGISTER{ $t_type }{ $m_type }->( $t, $m );
 }
 
@@ -105,7 +103,7 @@ sub register_package {
   croak "An empty prefix was provided (registering all subs is not desirable)"
     if length($prefix) == 0;
 
-  ## let perl do the look-up
+  ## Let perl do the look-up.
   my $tbl = do { no strict; \%{"$pkg\::"} };
 
   for( grep /^$prefix/, keys %$tbl  ) {
@@ -163,7 +161,7 @@ delegating to the associated subroutine, or C<croak>ing if one isn't available.
 
 =head2 Glossary
 
-=over 4
+=over
 
 =item comparators
 
@@ -184,7 +182,7 @@ first and second arguments, respectively).
 
 =head1 METHODS
 
-=over 4
+=over
 
 =item match( $topic, $match )
 
@@ -274,7 +272,7 @@ C<$Switch::Perlish::MATCH>, respectively).
 
 =head2 Helper subroutines
 
-=over 4
+=over
 
 =item value_cmp($t, $m)
 
@@ -312,6 +310,7 @@ register it like this:
 
 So we can now compare simple values with L<CGI> objects e.g
 
+  my $q     = CGI->new;
   my $check = $ARGV[0];
   printf "%s $check in params!\n",
          smatch($q, $check) ? 'found' : 'not found';
@@ -321,7 +320,7 @@ So we can now compare simple values with L<CGI> objects e.g
 There are currently 8 default types, all of which have a complete set of
 comparators implemented. These 8 types are:
 
-=over 4
+=over
 
 =item VALUE
 
@@ -349,7 +348,7 @@ Covers coderefs i.e subroutines.
 
 =item OBJECT
 
-Covers any objects whose comparators haven't been specified already.
+Covers any objects that don't have specific comparators.
 
 =item Regexp
 
@@ -364,7 +363,7 @@ L<Switch::Perlish::Smatch::Comparators>.
 
 =head1 TODO
 
-=over 4
+=over
 
 =item *
 
@@ -417,11 +416,11 @@ C<value_cmp>
 
 =head1 AUTHOR
 
-Dan Brook C<< <cpan@broquaint.com> >>
+Dan Brook C<< <mr.daniel.brook@gmail.com> >>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2005, Dan Brook. All Rights Reserved. This module is free
+Copyright (c) 2006, Dan Brook. All Rights Reserved. This module is free
 software. It may be used, redistributed and/or modified under the same
 terms as Perl itself.
 

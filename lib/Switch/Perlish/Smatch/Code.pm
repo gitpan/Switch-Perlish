@@ -5,46 +5,46 @@ $VERSION = '1.0.0';
 use strict;
 use warnings;
 
-## DESC - call $t with $m
+## DESC - Call $t with $m.
 sub _VALUE {
   my($t, $m) = @_;
   return $t->($m);
 }
 
-## DESC - call $t with $m
+## DESC - Call $t with $m.
 *_UNDEF = \&_VALUE;
 
-## DESC - check if $m refers to $t
+## DESC - Check if $m refers to $t.
 sub _SCALAR {
   my($t, $m) = @_;
   return $t == $$m;
 }
 
-## DESC - pass @$m to $t
+## DESC - Pass @$m to $t.
 sub _ARRAY {
   my($t, $m) = @_;
   return $t->(@$m);
 }
 
-## DESC - pass %$m to $t
+## DESC - Pass %$m to $t.
 sub _HASH {
   my($t, $m) = @_;
   return $t->(%$m);
 }
 
-## DESC - pass $m to $t
+## DESC - Pass $m to $t.
 sub _CODE {
   my($t, $m) = @_;
   return $t->($m);
 }
 
-## DESC - pass $m to $t
+## DESC - Pass $m to $t.
 sub _OBJECT {
   my($t, $m) = @_;
   return $t->($m);
 }
 
-## DESC - pass $m to $t
+## DESC - Pass $m to $t.
 sub _Regexp {
   my($t, $m) = @_;
   return $t->($m);
@@ -58,11 +58,11 @@ Switch::Perlish::Smatch->register_package( __PACKAGE__, 'CODE' );
 
 =head1 NAME
 
-Switch::Perlish::Smatch::Code -  the C<CODE> comparatory category package
+Switch::Perlish::Smatch::Code - The C<CODE> comparatory category package.
 
 =head1 VERSION
 
-1.0.0 - initial release
+1.0.0 - Initial release.
 
 =head1 DESCRIPTION
 
@@ -78,11 +78,11 @@ L<Switch::Perlish::Smatch::Comparators>
 
 =head1 AUTHOR
 
-Dan Brook C<< <cpan@broquaint.com> >>
+Dan Brook C<< <mr.daniel.brook@gmail.com> >>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2005, Dan Brook. All Rights Reserved. This module is free
+Copyright (c) 2006, Dan Brook. All Rights Reserved. This module is free
 software. It may be used, redistributed and/or modified under the same
 terms as Perl itself.
 
